@@ -40,7 +40,6 @@ func main() {
 type handler struct{}
 
 func newHandler() *handler {
-
 	return &handler{}
 }
 
@@ -76,6 +75,15 @@ func (h *handler) recordMetrics(ctx context.Context, elapsed time.Duration) erro
 	defer clt.Close()
 	req := monitoringpb.CreateTimeSeriesRequest{
 		Name: "projects/" + projectID,
+		TimeSeries: []*monitoringpb.TimeSeries{{
+			Points: []*monitoringpb.Point{{
+				Value: &monitoringpb.TypedValue{
+					Value: &monitoringpb.TypedValue_Int64Value{
+						Int64Value: elapsed.Milliseconds(),
+					},
+				},
+			}},
+		}},
 	}
 	if err := clt.CreateTimeSeries(ctx, &req); err != nil {
 		return fmt.Errorf("monitoring.MetricClient.CreateTimeSeries failed; %w", err)
