@@ -3,8 +3,8 @@ steps:
     args:
       - --cache=true
       - --cache-ttl=24h
-      - --destination=gcr.io/$PROJECT_ID/image:$COMMIT_SHA
-      - --destination=gcr.io/$PROJECT_ID/image:latest
+      - --destination=asia-northeast1-docker.pkg.dev/studious-journey/studious-journey/web:$COMMIT_SHA
+      - --destination=asia-northeast1-docker.pkg.dev/studious-journey/studious-journey/web:latest
 
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
     entrypoint: gcloud
@@ -13,6 +13,6 @@ steps:
       - deploy
       - test-service
       - --image
-      - hoge
+      - asia-northeast1-docker.pkg.dev/studious-journey/studious-journey/web:$COMMIT_SHA
       - --region
       - asia-northeast1
