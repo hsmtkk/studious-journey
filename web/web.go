@@ -7,12 +7,13 @@ import (
 	"net/http"
 	"time"
 
-	monitoring "cloud.google.com/go/monitoring/apiv3"
+	monitoring "cloud.google.com/go/monitoring/apiv3/v2"
 	"cloud.google.com/go/monitoring/apiv3/v2/monitoringpb"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/compute/v1"
+	"google.golang.org/genproto/googleapis/api/metric"
 )
 
 func main() {
@@ -76,6 +77,9 @@ func (h *handler) recordMetrics(ctx context.Context, elapsed time.Duration) erro
 	req := monitoringpb.CreateTimeSeriesRequest{
 		Name: "projects/" + projectID,
 		TimeSeries: []*monitoringpb.TimeSeries{{
+			Metric: &metric.Metric{
+				Type: "custom.googleapis.com/foo/bar",
+			},
 			Points: []*monitoringpb.Point{{
 				Value: &monitoringpb.TypedValue{
 					Value: &monitoringpb.TypedValue_Int64Value{
