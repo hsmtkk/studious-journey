@@ -1,0 +1,18 @@
+steps:
+  - name: gcr.io/kaniko-project/executor:latest
+    args:
+      - --cache=true
+      - --cache-ttl=24h
+      - --destination=gcr.io/$PROJECT_ID/image:$COMMIT_SHA
+      - --destination=gcr.io/$PROJECT_ID/image:latest
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - test-service
+      - --image
+      - hoge
+      - --region
+      - asia-northeast1
