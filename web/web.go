@@ -14,6 +14,7 @@ import (
 	"golang.org/x/oauth2/google"
 	"google.golang.org/api/compute/v1"
 	"google.golang.org/genproto/googleapis/api/metric"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 func main() {
@@ -74,6 +75,7 @@ func (h *handler) recordMetrics(ctx context.Context, elapsed time.Duration) erro
 		return fmt.Errorf("monitoring.NewMetricClient failed; %w", err)
 	}
 	defer clt.Close()
+	now := timestamppb.Now()
 	req := monitoringpb.CreateTimeSeriesRequest{
 		Name: "projects/" + projectID,
 		TimeSeries: []*monitoringpb.TimeSeries{{
@@ -81,6 +83,10 @@ func (h *handler) recordMetrics(ctx context.Context, elapsed time.Duration) erro
 				Type: "custom.googleapis.com/foo/bar",
 			},
 			Points: []*monitoringpb.Point{{
+				Interval: &monitoringpb.TimeInterval{
+					StartTime: now,
+					EndTime:   now,
+				},
 				Value: &monitoringpb.TypedValue{
 					Value: &monitoringpb.TypedValue_Int64Value{
 						Int64Value: elapsed.Milliseconds(),
